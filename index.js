@@ -12,7 +12,7 @@ client.on('message', msg => {
 
   if(msg.content === `${prefix}setup`) {
     let role = msg.guild.roles.cache.find(r => r.name === "Tickets");
-    if(!role && msg.member.hasPermission('ADMINISTRATOR')) { 
+    if(!role && msg.member.hasPermission('MANAGE_CHANNELS')) { 
       msg.reply('Setting up the role.');
       msg.guild.roles.create({
         data: {
@@ -21,7 +21,7 @@ client.on('message', msg => {
         },
         reason: 'The role is needed for the bot.'
       }).then(console.log("The role was created.")).catch(console.error);
-    }else if(!msg.member.hasPermission('ADMINISTRATOR')){
+    }else if(!msg.member.hasPermission('MANAGE_CHANNELS')){
       msg.reply(`You don't have premissions to setup the bot!`);
     } else{
       msg.reply(`The bot is already setup`);
