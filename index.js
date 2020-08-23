@@ -9,7 +9,6 @@ client.once('ready', () => {
 client.on('message', msg => {
   let role = msg.guild.roles.cache.find(r => r.name === "Tickets");
   let ticketsCategory = msg.guild.channels.cache.find(r => r.name === "open tickets");
-  let ticketID = 0;
 
   if(msg.content === `${prefix}setup`) { 
     //Checks if there isn't a role, a category and if the member typing the command has permissions to manage channels.
@@ -40,7 +39,38 @@ client.on('message', msg => {
     }
   }
 
+  //Making a new ticket
+  if(msg.content.startsWith(`${prefix}new`)) {
+    let randomID = Math.floor(Math.random() * Math.floor(99999));
+    let reason = msg.content.substr(`${prefix}new`.length+1);
+    if(reason == "") {
+      msg.channel.send("Please make sure to add a reason for your ticket."); 
+    } else {
+      console.log("Ticket number: "+randomID);
+      msg.guild.channels.create(`ticket-${randomID}`, {
+        type: 'text',
+        parent: `${ticketsCategory.id}`,
+      });
+      setTimeout(() => {
+        let ticketChannel = msg.guild.channels.cache.find(r => r.name === `ticket-${randomID}`);
+        ticketChannel.send(`${role} , The reason for the ticket is: **${reason}**. Please check it out.`);
+      }, 1500);
+    }
 
+  }
+
+  //Closing the ticket
+  if(msg.content === `${prefix}closeTicket`) { 
+    if(msg.member.hasPermission('MANAGE_CHANNELS')) {
+      if(msg.channel.name.split('-')[0] === "ticket") {
+        msg.channel.delete();
+      } else {
+        msg.reply("This channel isn't a ticket channel!");
+      }
+    } else {
+      msg.reply("You don't have premissions to close this ticket!");
+    }
+  }
 
   if (msg.content === `${prefix}head`) {
     msg.channel.send('ass!');
